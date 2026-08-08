@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW // создана, не назначена
+  ASSIGNED // отправлена менеджеру, ждём реакции
+  TAKEN // менеджер принял
+  CLOSED // менеджер отметил закрытой
+  LOST // цепочка исчерпана, никто не взял
+}
+
+enum AssignmentStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  EXPIRED
+}
+
+enum OutboxStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+model Manager {
+  id         String   @id @default(cuid())
+  tgUserId   BigInt   @unique
+  name       String
+  categories String[]
+  isActive   Boolean  @default(true)
+  priority   Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  assignments Assignment[]
+  takenLeads  Lead[]       @relation("TakenBy")
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  contactTgId  BigInt
+  contactName  String
+  contactUser  String?
+  contactPhone String?
+
+  category String
+  urgency  String
+  answers  Json
+  comment  String?
+
+  status    LeadStatus @default(NEW)
+  takenById String?
+  takenBy   Manager?   @relation("TakenBy", fields: [takenById], references: [id])
+  takenAt   DateTime?
+  closedAt  DateTime?
+  lostAt    DateTime?
+
+  assignments Assignment[]
+
+  @@index([status, createdAt])
+  @@index([createdAt])
+  @@index([takenById])
+}
+
+model Assignment {
+  id        String  @id @default(cuid())
+  leadId    String
+  lead      Lead    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  managerId String
+  manager   Manager @relation(fields: [managerId], references: [id])
+
+  attempt    Int
+  sentAt     DateTime         @default(now())
+  dueAt      DateTime
+  status     AssignmentStatus @default(PENDING)
+  resolvedAt DateTime?
+  chatId     BigInt?
+  messageId  Int?
+
+  @@unique([leadId, attempt])
+  @@index([status, dueAt]) // основной индекс тикера
+  @@index([managerId, status])
+}
+
+model OutboxJob {
+  id        String       @id @default(cuid())
+  kind      String
+  payload   Json
+  status    OutboxStatus @default(QUEUED)
+  attempts  Int          @default(0)
+  nextRunAt DateTime     @default(now())
+  lastError String?
+  createdAt DateTime     @default(now())
+  sentAt    DateTime?
+
+  @@index([status, nextRunAt])
+}
+
+model Setting {
+  key   String @id
+  value String
+}

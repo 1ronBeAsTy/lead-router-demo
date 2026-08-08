@@ -1,0 +1,67 @@
+{
+  "name": "lead-router-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Telegram-бот приёма и маршрутизации заявок с SLA-эскалацией, переживающей рестарт",
+  "scripts": {
+    "dev": "concurrently -n web,bot,ticker -c cyan,green,yellow \"npm:dev:web\" \"npm:dev:bot\" \"npm:dev:ticker\"",
+    "dev:web": "next dev",
+    "dev:bot": "tsx watch src/bot/index.ts",
+    "dev:ticker": "tsx watch src/ticker/index.ts",
+    "build": "prisma generate && next build",
+    "start:web": "next start",
+    "start:bot": "tsx src/bot/index.ts",
+    "start:ticker": "tsx src/ticker/index.ts",
+    "start:worker": "tsx src/worker.ts",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset --force",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "date-fns": "^4.1.0",
+    "google-auth-library": "^10.4.0",
+    "googleapis": "^161.0.0",
+    "grammy": "^1.39.1",
+    "next": "^15.5.23",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "recharts": "^2.15.4",
+    "tsx": "^4.20.6",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.16",
+    "@types/node": "^24.9.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "concurrently": "^9.2.4",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^15.5.23",
+    "prisma": "^6.19.0",
+    "tailwindcss": "^4.1.16",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "allowScripts": {
+    "@prisma/client@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "esbuild@0.28.2": true,
+    "prisma@6.19.3": true,
+    "sharp@0.34.5": true,
+    "unrs-resolver@1.12.2": true
+  }
+}
