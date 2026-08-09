@@ -1,0 +1,16 @@
+# Секреты и локальное окружение — на Vercel всё приходит из переменных проекта.
+.env
+.env.*
+
+node_modules
+.next
+out
+dist
+*.tsbuildinfo
+
+tests
+coverage
+.vitest
+
+docker-compose.yml
+pgdata

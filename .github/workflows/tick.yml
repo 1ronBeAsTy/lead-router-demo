@@ -1,0 +1,61 @@
+# Внешний планировщик для /api/cron/tick.
+#
+# На Vercel Hobby родной cron ходит раз в сутки, а SLA считается минутами —
+# поэтому тикер дёргается отсюда. Логика та же, что у процессного тикера
+# из src/ticker/index.ts: роут идемпотентен, переходы статусов идут условными
+# апдейтами, звать его можно как угодно часто и из нескольких мест сразу.
+#
+# GitHub запускает расписание с задержкой и не гарантирует минутную точность,
+# поэтому один запуск делает несколько тиков подряд — так гранулярность
+# получается около минуты даже при расписании раз в пять минут.
+#
+# Нужны в настройках репозитория:
+#   Secrets  → CRON_SECRET  (тот же, что в переменных проекта Vercel)
+#   Variables → TICK_URL    (https://<домен>/api/cron/tick)
+
+name: tick
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Дёрнуть тикер
+        env:
+          TICK_URL: ${{ vars.TICK_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -u
+          if [ -z "${TICK_URL}" ] || [ -z "${CRON_SECRET}" ]; then
+            echo "::error::TICK_URL или CRON_SECRET не заданы в настройках репозитория"
+            exit 1
+          fi
+
+          failures=0
+          for i in $(seq 1 5); do
+            code=$(curl --silent --show-error --max-time 70 \
+              --output /tmp/tick.json --write-out '%{http_code}' \
+              --header "Authorization: Bearer ${CRON_SECRET}" \
+              "${TICK_URL}") || code=000
+
+            echo "тик $i: HTTP $code $(head -c 300 /tmp/tick.json 2>/dev/null)"
+            [ "$code" = "200" ] || failures=$((failures + 1))
+
+            [ "$i" -lt 5 ] && sleep 60
+          done
+
+          # Одиночный сбой — это сеть или холодный старт, следующий запуск догонит.
+          # Пять подряд означают, что домен или секрет разъехались.
+          if [ "$failures" -ge 5 ]; then
+            echo "::error::все 5 тиков не прошли"
+            exit 1
+          fi
