@@ -45,6 +45,8 @@ const FALLBACK_TEST_URL =
 export const TEST_DATABASE_URL = process.env.DATABASE_URL_TEST || FALLBACK_TEST_URL
 
 process.env.DATABASE_URL = TEST_DATABASE_URL
-process.env.NODE_ENV = 'test'
+// Прямое присваивание не проходит: типы Next объявляют `NODE_ENV` как readonly,
+// и они видны здесь через `next-env.d.ts`. Поведение то же, тип не спорит.
+Object.assign(process.env, { NODE_ENV: 'test' })
 if (!process.env.ADMIN_PASSWORD) process.env.ADMIN_PASSWORD = 'test'
 if (!process.env.BOT_TOKEN) process.env.BOT_TOKEN = '000:test-token'

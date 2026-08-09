@@ -1,0 +1,272 @@
+@import "tailwindcss";
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Палитра. Тема переключается только через prefers-color-scheme — никакого
+   тумблера и никакого мигания при загрузке. Значения держим в обычных
+   CSS-переменных, а @theme inline пробрасывает их в утилиты Tailwind.
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: light dark;
+
+  --canvas: #f2f4f7;
+  --surface: #ffffff;
+  --surface-2: #f7f9fb;
+  --surface-3: #eaedf2;
+  --line: #e0e4ea;
+  --line-strong: #c7cdd7;
+
+  --ink: #14181e;
+  --ink-2: #4b5464;
+  --ink-3: #7b8595;
+
+  --accent: #2f56a8;
+  --accent-soft: #e9eefb;
+  --on-accent: #ffffff;
+
+  --ok: #1c7a4c;
+  --ok-bg: #e5f3ec;
+  --ok-line: #bfdfcd;
+
+  --warn: #8a5a10;
+  --warn-bg: #fbf1dd;
+  --warn-line: #e9d5aa;
+
+  --bad: #a63a33;
+  --bad-bg: #fbeae8;
+  --bad-line: #eec7c2;
+
+  --done: #3b5470;
+  --done-bg: #e9eff6;
+  --done-line: #ccd8e5;
+
+  --neutral: #59626f;
+  --neutral-bg: #edf0f3;
+  --neutral-line: #dde1e7;
+
+  --chart-taken: #3f8f68;
+  --chart-open: #c0912f;
+  --chart-lost: #bf5a52;
+  --chart-grid: #e4e7ed;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --canvas: #0b0d10;
+    --surface: #131619;
+    --surface-2: #171b20;
+    --surface-3: #1e232a;
+    --line: #262c34;
+    --line-strong: #39424d;
+
+    --ink: #e7eaef;
+    --ink-2: #a1abb8;
+    --ink-3: #737d8b;
+
+    --accent: #6f9aef;
+    --accent-soft: #172038;
+    --on-accent: #0b0d10;
+
+    --ok: #63c191;
+    --ok-bg: #10241a;
+    --ok-line: #1f3f2d;
+
+    --warn: #d8a748;
+    --warn-bg: #261e10;
+    --warn-line: #45361f;
+
+    --bad: #e0776d;
+    --bad-bg: #291513;
+    --bad-line: #4a2521;
+
+    --done: #8fabc9;
+    --done-bg: #141c25;
+    --done-line: #26323f;
+
+    --neutral: #9aa4b1;
+    --neutral-bg: #1a1e24;
+    --neutral-line: #2b323a;
+
+    --chart-taken: #4d9a74;
+    --chart-open: #ac8330;
+    --chart-lost: #ad554d;
+    --chart-grid: #222932;
+  }
+}
+
+@theme inline {
+  --font-sans:
+    ui-sans-serif, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Mono", Menlo, Consolas, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-ok-line: var(--ok-line);
+
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-line: var(--warn-line);
+
+  --color-bad: var(--bad);
+  --color-bad-bg: var(--bad-bg);
+  --color-bad-line: var(--bad-line);
+
+  --color-done: var(--done);
+  --color-done-bg: var(--done-bg);
+  --color-done-line: var(--done-line);
+
+  --color-neutral: var(--neutral);
+  --color-neutral-bg: var(--neutral-bg);
+  --color-neutral-line: var(--neutral-line);
+}
+
+@layer base {
+  /* В Tailwind v4 бордюр по умолчанию currentColor — возвращаем осмысленный. */
+  *,
+  ::before,
+  ::after {
+    border-color: var(--line);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background-color: var(--accent-soft);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--line-strong);
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Повторяющаяся отделка. Интерфейс плотный, одни и те же четыре примитива
+   встречаются на каждой странице — держим их здесь, чтобы разметка читалась.
+   ──────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+  .panel {
+    @apply rounded-xl border border-line bg-surface;
+  }
+
+  .panel-head {
+    @apply flex flex-wrap items-center justify-between gap-3 border-b border-line px-4 py-3;
+  }
+
+  .panel-title {
+    @apply text-[13px] font-semibold tracking-tight text-ink;
+  }
+
+  .label {
+    @apply mb-1 block text-[11px] font-medium uppercase tracking-wide text-ink-3;
+  }
+
+  .input {
+    @apply h-9 w-full rounded-md border border-line bg-surface-2 px-2.5 text-[13px] text-ink
+      transition-colors outline-none placeholder:text-ink-3 focus:border-accent focus:bg-surface;
+  }
+
+  select.input {
+    @apply cursor-pointer appearance-none pr-7;
+  }
+
+  .btn {
+    @apply inline-flex h-9 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md
+      border border-line bg-surface-2 px-3 text-[13px] font-medium whitespace-nowrap text-ink
+      transition-colors hover:border-line-strong hover:bg-surface-3
+      disabled:cursor-progress disabled:opacity-55;
+  }
+
+  .btn-primary {
+    @apply border-transparent bg-accent text-on-accent hover:border-transparent hover:brightness-110;
+  }
+
+  .btn-quiet {
+    @apply border-transparent bg-transparent text-ink-2 hover:bg-surface-3 hover:text-ink;
+  }
+
+  .btn-danger {
+    @apply border-bad-line bg-bad-bg text-bad hover:border-bad hover:bg-bad-bg;
+  }
+
+  .btn-sm {
+    @apply h-7 px-2 text-xs;
+  }
+
+  .badge {
+    @apply inline-flex items-center gap-1 rounded border px-1.5 py-px text-[11px] leading-[18px]
+      font-medium whitespace-nowrap;
+  }
+
+  .badge-ok {
+    @apply border-ok-line bg-ok-bg text-ok;
+  }
+  .badge-warn {
+    @apply border-warn-line bg-warn-bg text-warn;
+  }
+  .badge-bad {
+    @apply border-bad-line bg-bad-bg text-bad;
+  }
+  .badge-done {
+    @apply border-done-line bg-done-bg text-done;
+  }
+  .badge-neutral {
+    @apply border-neutral-line bg-neutral-bg text-neutral;
+  }
+
+  .th {
+    @apply px-3 py-2 text-left text-[11px] font-semibold tracking-wide whitespace-nowrap
+      text-ink-3 uppercase;
+  }
+
+  .td {
+    @apply px-3 py-2.5 align-top text-[13px] text-ink;
+  }
+
+  .row-hover {
+    @apply transition-colors hover:bg-surface-2;
+  }
+}
