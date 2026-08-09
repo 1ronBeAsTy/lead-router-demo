@@ -27,6 +27,14 @@ const baseSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
   ESCALATION_CHAT_ID: z.string().optional(),
+
+  /**
+   * Serverless-режим (Vercel). Бот там живёт вебхуком, а тикер — роутом
+   * `/api/cron/tick`, который дёргают снаружи. Оба секрета необязательны:
+   * без них процесс поднимается, но соответствующий роут отвечает 503.
+   */
+  CRON_SECRET: z.string().optional(),
+  TELEGRAM_WEBHOOK_SECRET: z.string().optional(),
   GOOGLE_SHEETS_ID: z.string().optional(),
   GOOGLE_SERVICE_ACCOUNT_EMAIL: z.string().optional(),
   GOOGLE_PRIVATE_KEY: z.string().optional(),

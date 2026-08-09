@@ -64,8 +64,13 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
   return response
 }
 
+/**
+ * `api/telegram` и `api/cron` вынесены из-под куки сознательно: их зовут
+ * Telegram и планировщик, а не браузер. У каждого своя проверка секрета
+ * внутри роута — см. `src/app/api/telegram/webhook` и `src/app/api/cron/tick`.
+ */
 export const config = {
   matcher: [
-    '/((?!login|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest)$).*)',
+    '/((?!login|api/telegram|api/cron|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|webmanifest)$).*)',
   ],
 }
