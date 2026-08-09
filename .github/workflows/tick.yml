@@ -15,7 +15,7 @@
 
 name: tick
 
-on:
+on: # расписание + ручной запуск из вкладки Actions
   schedule:
     - cron: '*/5 * * * *'
   workflow_dispatch:
