@@ -7,6 +7,20 @@ import { z } from 'zod'
  * вызывается только из процессов, которые реально ходят в Telegram.
  */
 
+/**
+ * `.env` читаем здесь, до разбора схемы. Next.js делает это сам, а вот `tsx`
+ * (бот, тикер, сид) — нет; если оставить загрузку точкам входа, каждая из них
+ * вынуждена тащить динамические импорты, чтобы обогнать hoisting статических.
+ */
+;(() => {
+  if (typeof process.loadEnvFile !== 'function') return
+  try {
+    process.loadEnvFile()
+  } catch {
+    // Файла нет — значит переменные приходят от платформы, это штатный случай.
+  }
+})()
+
 const baseSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL обязателен'),
   ADMIN_PASSWORD: z.string().min(1, 'ADMIN_PASSWORD обязателен'),
