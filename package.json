@@ -34,6 +34,7 @@
     "googleapis": "^161.0.0",
     "grammy": "^1.39.1",
     "next": "^15.5.23",
+    "prisma": "^6.19.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "recharts": "^2.15.4",
@@ -48,7 +49,6 @@
     "concurrently": "^9.2.4",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.23",
-    "prisma": "^6.19.0",
     "tailwindcss": "^4.1.16",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"

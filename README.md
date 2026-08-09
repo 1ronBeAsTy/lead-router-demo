@@ -108,7 +108,16 @@ tests/            юнит-тесты логики + интеграционны�
 
 ## Деплой
 
-Railway, один проект и три сервиса: Postgres, `web` (`railway.json`) и `worker` (`railway.worker.json`). Переменные — из `.env.example`; `DATABASE_URL` подставляется ссылкой на сервис Postgres. Миграции применяются командой старта веб-сервиса.
+Railway, один проект и три сервиса: Postgres, `web` и `worker`. Оба приложения собираются из одного репозитория и делят `railway.json` — роль задаётся переменной:
+
+```
+SERVICE_ROLE=web      # next start
+SERVICE_ROLE=worker   # бот (long polling) + тикеры
+```
+
+Стартовая команда `npm run db:deploy && npm run start:${SERVICE_ROLE:-web}` одинакова для обоих: `prisma migrate deploy` идемпотентен и берёт advisory-lock, поэтому одновременный старт двух сервисов безопасен. Остальные переменные — из `.env.example`; `DATABASE_URL` подставляется ссылкой `${{Postgres.DATABASE_URL}}`.
+
+Бот работает на long polling, отдельный домен ему не нужен — публичный адрес есть только у `web`. Важно: polling держит ровно один процесс, поэтому локальный воркер нужно остановить перед деплоем.
 
 Google Sheets необязателен: без кредов outbox-задания честно помечаются успешными, а остальная система работает как обычно.
 

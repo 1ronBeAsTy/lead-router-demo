@@ -5,8 +5,7 @@
     "buildCommand": "npm run build"
   },
   "deploy": {
-    "startCommand": "npm run db:deploy && npm run start:web",
-    "healthcheckPath": "/login",
+    "startCommand": "npm run db:deploy && npm run start:${SERVICE_ROLE:-web}",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 5
   }
